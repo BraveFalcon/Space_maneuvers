@@ -5,8 +5,7 @@ add_executable(src
         Body.cpp
         Jet_Body.cpp
         System_Bodies.cpp
-        DrawObject.cpp
         Animation.cpp
         )
 
-target_link_libraries(src GL GLU glut SOIL)
+target_link_libraries(src sfml-graphics sfml-window sfml-system GL)

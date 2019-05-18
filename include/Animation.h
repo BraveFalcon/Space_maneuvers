@@ -2,45 +2,41 @@
 
 #include <time.h>
 #include "Vector3.hpp"
-#include <GL/glut.h>
+#include <SFML/Window.hpp>
+#include <SFML/Graphics.hpp>
 #include "Animation_System.h"
 #include "Color.hpp"
-#include "Rectangle.hpp"
 
-class Animation{
+class Animation {
 private:
-    static Animation *instance_wrap;
-
-    Animation_System *anim_sys;
-    Rectangle background;
-
-    const int window_width = 1920, window_height = 1080;
+    sf::Texture _background_texture;
+    sf::Sprite background;
+    Animation_System *animation_system;
 
     double_t init_anim_speed = 10000;
     double_t anim_speed = init_anim_speed;
 
-    const double init_scale = window_height / 500e9;
-    double scale = init_scale;
+
 
     const Vector3d *pos_center = new Vector3d(0);
     double x_shift = 0, y_shift = 0;
 
-    int window;
+    sf::RenderWindow window;
 
-    void keyboard_event(unsigned char key, int x, int y);
+    const double init_scale;
 
-    static void keyboard_event_wrap(unsigned char key, int x, int y);
+    sf::View view;
 
-    void spec_keyboard_event(int key, int x, int y);
 
-    static void spec_keyboard_event_wrap(int key, int x, int y);
+    void keyboard_handler();
 
-    void display();
+    void draw();
 
-    static void display_wrap();
 
 public:
-    Animation(Animation_System *animation_system, const std::string &background_image);
+    explicit Animation(Animation_System *animationSystem);
+
+    void set_background(const std::string &image_file);
 
     void run();
 };

@@ -1,12 +1,12 @@
 #include "Animation.h"
+#include "Planet.hpp"
 
-Animation *Animation::instance_wrap = nullptr;
-
-void Animation::keyboard_event(unsigned char key, int x, int y) {
+void Animation::keyboard_handler() {
+    /*
     static const double delta_scale = 0.1;
     static const double delta_speed = 0.1;
     if (key >= '0' && key <= '9' && GLUT_ACTIVE_ALT) {
-        pos_center = anim_sys->get_ptr_pos(key - '0');
+        pos_center = animation_system->get_ptr_pos(key - '0');
         x_shift = 0;
         y_shift = 0;
 
@@ -31,14 +31,11 @@ void Animation::keyboard_event(unsigned char key, int x, int y) {
                 anim_sys->keyboard_event(key, glutGetModifiers());
                 break;
         }
-
+*/
 
 }
 
-void Animation::keyboard_event_wrap(unsigned char key, int x, int y) {
-    instance_wrap->keyboard_event(key, x, y);
-}
-
+/*
 void Animation::spec_keyboard_event(int key, int x, int y) {
     static const double delta_shift = 10;
     switch (key) {
@@ -68,65 +65,57 @@ void Animation::spec_keyboard_event(int key, int x, int y) {
             break;
     }
 }
+*/
 
-void Animation::spec_keyboard_event_wrap(int key, int x, int y) {
-    instance_wrap->spec_keyboard_event(key, x, y);
-}
+void Animation::draw() {
+    window.clear();
 
-void Animation::display() {
-    glClear(GL_COLOR_BUFFER_BIT);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
+    window.setView(window.getDefaultView());
+    window.draw(background);
 
-    background.draw(scale);
+    window.setView(view);
+    //glTranslated(0.5 * window_width - scale * pos_center->x - x_shift,
+    //             0.5 * window_height - scale * pos_center->y - y_shift, 0);
+    //glScaled(scale, scale, 1);
 
-    glTranslated(0.5 * window_width - scale * pos_center->x - x_shift,
-                 0.5 * window_height - scale * pos_center->y - y_shift, 0);
-    glScaled(scale, scale, 1);
+    //glLineWidth(6);
 
-    glLineWidth(6);
-
-    for (const auto draw_obj : anim_sys->get_draw_objects()) {
-        draw_obj->draw(scale);
+    for (const auto draw_obj : animation_system->get_draw_objects()) {
+        window.draw(*draw_obj);
     }
 
-    anim_sys->update(anim_speed);
-
-    glutSwapBuffers();
 }
 
-void Animation::display_wrap() {
-    instance_wrap->display();
+//TODO::learn more about MSAA
+Animation::Animation(Animation_System *animationSystem) : window(sf::VideoMode::getFullscreenModes()[0], "",
+                                sf::Style::Fullscreen, sf::ContextSettings(5, 5, 5)),
+                         init_scale(window.getSize().x / 500e9),
+                         animation_system(animationSystem),
+                         view(sf::View(sf::Vector2f(0.0f, 0.0f),
+                                       sf::Vector2f(window.getSize()) /
+                                       static_cast<float>(init_scale))) {
+    background.setPosition(0, 0);
 }
 
-Animation::Animation(Animation_System *animation_system,
-                     const std::string &background_image) : anim_sys(animation_system) {
-
-    instance_wrap = this;
-
-    int argc = 0;
-    char *argv = "";
-    glutInit(&argc, &argv);
-
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_MULTISAMPLE | GLUT_ALPHA);
-
-    window = glutCreateWindow("");
-    glutFullScreen();
-
-    glutDisplayFunc(display_wrap);
-    glutIdleFunc(display_wrap);
-    glutKeyboardFunc(keyboard_event_wrap);
-    glutSpecialFunc(spec_keyboard_event_wrap);
-
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluOrtho2D(0, window_width, 0, window_height);
-    glClearColor(0, 0, 0, 1);
-
-    background = Rectangle(0, 0, 1920, 1080, background_image);
-
+void Animation::set_background(const std::string &image_file) {
+    if (!_background_texture.loadFromFile(image_file))
+        exit(1);
+    background.setTexture(_background_texture);
 }
 
 void Animation::run() {
-    glutMainLoop();
+    while (window.isOpen()) {
+
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed)
+                window.close();
+        }
+
+        keyboard_handler();
+        draw();
+        window.display();
+        animation_system->update(anim_speed);
+
+    }
 }

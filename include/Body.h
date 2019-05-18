@@ -13,7 +13,6 @@ protected:
 private:
     Vector3d pos, vel;
     std::list<Vector3d> trajectory;
-    Vector3d last_vel_in_traj;
     std::list<Vector3d> buffer_poses;
 public:
     Body() = delete;
@@ -32,7 +31,7 @@ public:
 
     virtual void update_state(const Vector3d &acceleration);
 
-    void update_trajectory();
+    void update_trajectory(bool review);
 
     Vector3d get_acceleration_without_G(const Vector3d &pos_) const;
 

@@ -43,6 +43,12 @@ double System_Bodies::get_full_energy() const {
 }
 
 void System_Bodies::update_trajectories() {
-    for (Body *body_ptr : bodies_ptrs)
-        body_ptr->update_trajectory();
+    static double last_rewiew;
+    if (time - last_rewiew > 3600 * 24 * 365) {
+        last_rewiew = time;
+        for (Body *body_ptr : bodies_ptrs)
+            body_ptr->update_trajectory(true);
+    } else
+        for (Body *body_ptr : bodies_ptrs)
+            body_ptr->update_trajectory(false);
 }

@@ -34,13 +34,14 @@ public:
 
     void draw(sf::RenderTarget &target, sf::RenderStates states) const final {
         target.pushGLStates();
-        glLineWidth(9);
+        glLineWidth(4);
         glColor3ub(color.r, color.g, color.b);
 
         glBegin(GL_LINE_STRIP);
         for (const Vector3d &pos : get_trajectory())
             glVertex2d(pos.x, pos.y);
         glEnd();
+        std::cout << get_trajectory().size() << '\n';
 
         target.popGLStates();
 

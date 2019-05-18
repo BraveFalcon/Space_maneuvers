@@ -13,7 +13,7 @@ private:
     sf::Sprite background;
     Animation_System *animation_system;
 
-    double_t init_anim_speed = 10000;
+    double_t init_anim_speed = 0.5 * 24 * 3600;
     double_t anim_speed = init_anim_speed;
 
 

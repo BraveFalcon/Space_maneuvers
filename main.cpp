@@ -35,7 +35,7 @@ int main() {
                    sf::Color(0, 0, 255), "../../images/neptune.png")
     };
     Animation animation(&solar_system);
-    //animation.set_background("../../images/background.jpg");
+    animation.set_background("../../images/background.jpg");
     animation.run();
     return 0;
 }

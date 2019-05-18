@@ -61,6 +61,7 @@ void Animation::draw() {
 
     window.setView(window.getDefaultView());
     window.draw(background);
+    window.draw(fps_text);
 
     sf::View view(sf::Vector2f(static_cast<float>(pos_center->x), static_cast<float>(pos_center->y)),
                   sf::Vector2f(window.getSize()) / scale);
@@ -85,6 +86,13 @@ Animation::Animation(Animation_System *animationSystem) : window(sf::VideoMode::
                                                           animation_system(animationSystem),
                                                           scale(init_scale) {
     background.setPosition(0, 0);
+    if (!_monospacedFont.loadFromFile("../../fonts/monospaced.ttf"))
+        exit(1);
+    fps_text.setFont(_monospacedFont);
+    fps_text.setCharacterSize(50);
+    fps_text.setFillColor(sf::Color::Yellow);
+    fps_text.setStyle(sf::Text::Bold);
+    fps_text.setPosition(0, -20);
 }
 
 void Animation::set_background(const std::string &image_file) {
@@ -95,7 +103,8 @@ void Animation::set_background(const std::string &image_file) {
 
 void Animation::run() {
     while (window.isOpen()) {
-
+        frame++;
+        fps_text.setString(std::to_string(get_fps()));
         sf::Event event;
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed)
@@ -110,4 +119,16 @@ void Animation::run() {
         animation_system->update(anim_speed);
 
     }
+}
+
+int Animation::get_fps() {
+    static sf::Clock clock;
+    static unsigned long last_frame;
+    static float fps;
+
+    if (clock.getElapsedTime().asSeconds() > 1.0) {
+        fps = (frame - last_frame) / clock.restart().asSeconds();
+        last_frame = frame;
+    }
+    return static_cast<int>(fps);
 }

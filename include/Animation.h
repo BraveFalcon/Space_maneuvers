@@ -5,17 +5,16 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 #include "Animation_System.h"
-#include "Color.hpp"
 
 class Animation {
 private:
+    unsigned long frame = 0;
     sf::Texture _background_texture;
     sf::Sprite background;
     Animation_System *animation_system;
 
     double_t init_anim_speed = 10000;
     double_t anim_speed = init_anim_speed;
-
 
 
     const Vector3d *pos_center = new Vector3d(0);
@@ -29,8 +28,13 @@ private:
     void keyboard_handler();
 
     void keyboard_event(sf::Event event);
+
     void draw();
 
+    int get_fps();
+
+    sf::Font _monospacedFont;
+    sf::Text fps_text;
 
 public:
     explicit Animation(Animation_System *animationSystem);

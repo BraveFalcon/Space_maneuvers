@@ -48,6 +48,6 @@ public:
         return &(planets[i].get_pos());
     }
 
-    void keyboard_event(int key, int mode) final {};
+    void keyboard_event(sf::Event event) final {};
 
 };

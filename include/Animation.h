@@ -19,17 +19,16 @@ private:
 
 
     const Vector3d *pos_center = new Vector3d(0);
-    double x_shift = 0, y_shift = 0;
+    float x_shift = 0, y_shift = 0;
 
     sf::RenderWindow window;
 
-    const double init_scale;
-
-    sf::View view;
-
+    const float init_scale;
+    float scale;
 
     void keyboard_handler();
 
+    void keyboard_event(sf::Event event);
     void draw();
 
 

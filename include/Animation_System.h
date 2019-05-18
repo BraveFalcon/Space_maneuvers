@@ -12,6 +12,6 @@ public:
 
     virtual const Vector3d *get_ptr_pos(size_t i) const = 0;
 
-    virtual void keyboard_event(int key, int mode) = 0;
+    virtual void keyboard_event(sf::Event event) = 0;
 
 };

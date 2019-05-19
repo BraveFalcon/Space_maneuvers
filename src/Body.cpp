@@ -19,7 +19,7 @@ void Body::update_state(const Vector3d &acceleration) {
 }
 
 void Body::update_trajectory(bool rewiew) {
-    const double max_angle = 3 / 180. * M_PI;
+    const double max_angle = 2 / 180. * M_PI;
     const double min_cos = cos(max_angle);
 
     for (const auto &new_pos : buffer_poses){

@@ -8,7 +8,7 @@ private:
     double fuel_drain;
     const double own_mass;
     Vector3d direction;
-    bool is_engine_on;
+    bool _is_engine_on;
 public:
     Jet_Body() = delete;
 
@@ -17,12 +17,16 @@ public:
     Jet_Body(Vector3d pos_, Vector3d vel_, double own_mass_, double fuel_mass_, double fuel_drain_,
              double fuel_vel_);
 
-    void update_state(const Vector3d &acceleration_external);
+    void update_state(const Vector3d &acceleration_external) final;
 
     Vector3d get_direction() const;
+
     void set_direction(Vector3d new_direction);
 
-    void run_engine();
-    void kill_engine();
+    void engine_on();
+
+    void engine_off();
+
+    bool is_engine_on() const;
 };
 

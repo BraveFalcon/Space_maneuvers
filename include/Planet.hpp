@@ -2,8 +2,8 @@
 
 #include "Body.h"
 #include "Vector3.hpp"
-#include "Color.hpp"
 #include <SFML/Graphics.hpp>
+#include <SFML/OpenGL.hpp>
 
 class Solar_System;
 
@@ -21,10 +21,10 @@ public:
                                    texture(planet.texture), sprite(planet.sprite) {
         sprite.setTexture(texture);
     }
-    //Planet(Planet &&p) = default;
 
-    Planet(Vector3d pos_, Vector3d vel_, double mass_, sf::Color color_, const std::string &image_file) :
-            Body(pos_, vel_, mass_), color(color_) {
+    Planet(Vector3d pos_, Vector3d vel_, double mass_, float radius_, sf::Color color_, float view_scale_,
+           const std::string &image_file) :
+            Body(pos_, vel_, mass_), color(color_), radius(radius_), view_scale(view_scale_) {
         if (!texture.loadFromFile(image_file))
             exit(1);
         sprite.setTexture(texture);
@@ -33,19 +33,20 @@ public:
     }
 
     void draw(sf::RenderTarget &target, sf::RenderStates states) const final {
+        //Костыль
         target.pushGLStates();
         glLineWidth(4);
         glColor3ub(color.r, color.g, color.b);
 
         glBegin(GL_LINE_STRIP);
         for (const Vector3d &pos : get_trajectory())
-            glVertex2d(pos.x, pos.y);
+            glVertex2d(pos.x, -pos.y); //revert y-axis
         glEnd();
-        std::cout << get_trajectory().size() << '\n';
+        //std::cout << get_trajectory().size() << '\n';
 
         target.popGLStates();
 
-        target.resetGLStates();
+        states.transform.scale(1, -1); //revert y-axis
         target.draw(sprite, states);
     }
 };

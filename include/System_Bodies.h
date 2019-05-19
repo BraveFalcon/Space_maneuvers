@@ -17,8 +17,6 @@ public:
 
     void update_state();
 
-    void update_trajectories();
-
     double get_time() const;
 
     Vector3d get_acceleration(const Vector3d &pos_) const;

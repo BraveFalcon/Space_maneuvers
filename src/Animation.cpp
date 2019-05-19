@@ -27,16 +27,16 @@ void Animation::keyboard_event(sf::Event event) {
         }
 }
 
-void Animation::keyboard_handler() {
+void Animation::keyboard_handler(const float fps) {
     using sf::Keyboard;
-    static const float delta_scale = 0.01;
-    static const float delta_speed = 0.01;
-    static const float delta_shift = 3;
+    float delta_scale = 1.0f / fps;
+    float delta_speed = 0.5f / fps;
+    float delta_shift = 300.0f / fps;
 
     if (Keyboard::isKeyPressed(Keyboard::Equal)) {
         if (Keyboard::isKeyPressed(Keyboard::RControl))
             scale *= 1 + delta_scale;
-        else
+        else if (fps > 1)
             anim_speed *= 1 + delta_speed;
     }
     if (Keyboard::isKeyPressed(Keyboard::Dash)) {
@@ -53,6 +53,8 @@ void Animation::keyboard_handler() {
         y_shift -= delta_shift;
     if (Keyboard::isKeyPressed(Keyboard::Down))
         y_shift += delta_shift;
+
+    animation_system->keyboard_handler(fps);
 }
 
 
@@ -63,16 +65,17 @@ void Animation::draw() {
     window.draw(background);
     window.draw(fps_text);
 
-    sf::View view(sf::Vector2f(static_cast<float>(pos_center->x), static_cast<float>(pos_center->y)),
-                  sf::Vector2f(window.getSize()) / scale);
+    sf::View view;
+    view.setCenter(static_cast<float>(pos_center->x), static_cast<float>(-pos_center->y)); //revert y-axis
+    view.setSize(window.getSize().x / scale, window.getSize().y / scale);
     view.move(x_shift / scale, y_shift / scale);
+
     window.setView(view);
     //glTranslated(0.5 * window_width - scale * pos_center->x - x_shift,
     //             0.5 * window_height - scale * pos_center->y - y_shift, 0);
     //glScaled(scale, scale, 1);
 
     //glLineWidth(6);
-
     for (const auto draw_obj : animation_system->get_draw_objects()) {
         window.draw(*draw_obj);
     }
@@ -81,7 +84,8 @@ void Animation::draw() {
 
 //TODO::learn more about MSAA
 Animation::Animation(Animation_System *animationSystem) : window(sf::VideoMode::getFullscreenModes()[0], "",
-                                                                 sf::Style::Fullscreen, sf::ContextSettings(0, 0, 16)),
+                                                                 sf::Style::Fullscreen,
+                                                                 sf::ContextSettings(0, 0, 16, 3, 0)),
                                                           init_scale(window.getSize().x / 700e9f),
                                                           animation_system(animationSystem),
                                                           scale(init_scale) {
@@ -93,6 +97,8 @@ Animation::Animation(Animation_System *animationSystem) : window(sf::VideoMode::
     fps_text.setFillColor(sf::Color::Yellow);
     fps_text.setStyle(sf::Text::Bold);
     fps_text.setPosition(0, -20);
+    window.setVerticalSyncEnabled(true);
+    window.setKeyRepeatEnabled(false);
 }
 
 void Animation::set_background(const std::string &image_file) {
@@ -109,14 +115,14 @@ void Animation::run() {
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed)
                 window.close();
-            if (event.type == sf::Event::KeyPressed)
+            if (event.type == sf::Event::KeyPressed || event.type == sf::Event::KeyReleased)
                 keyboard_event(event);
         }
 
-        keyboard_handler();
+        keyboard_handler(get_fps());
         draw();
         window.display();
-        animation_system->update(anim_speed);
+        animation_system->update(anim_speed / std::max(get_fps(), 30));
 
     }
 }
@@ -124,9 +130,9 @@ void Animation::run() {
 int Animation::get_fps() {
     static sf::Clock clock;
     static unsigned long last_frame;
-    static float fps;
+    static float fps = 100;
 
-    if (clock.getElapsedTime().asSeconds() > 1.0) {
+    if (clock.getElapsedTime().asSeconds() > 0.2) {
         fps = (frame - last_frame) / clock.restart().asSeconds();
         last_frame = frame;
     }

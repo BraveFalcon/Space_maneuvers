@@ -4,7 +4,7 @@
 #include "Vector3.hpp"
 #include <SFML/Graphics.hpp>
 
-class Animation_System{
+class Animation_System {
 public:
     virtual void update(double time) = 0;
 
@@ -13,5 +13,7 @@ public:
     virtual const Vector3d *get_ptr_pos(size_t i) const = 0;
 
     virtual void keyboard_event(sf::Event event) = 0;
+
+    virtual void keyboard_handler(float fps) = 0;
 
 };

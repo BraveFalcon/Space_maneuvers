@@ -41,14 +41,3 @@ double System_Bodies::get_full_energy() const {
                    (bodies_ptrs[i]->get_pos() - bodies_ptrs[j]->get_pos()).abs();
     return res;
 }
-
-void System_Bodies::update_trajectories() {
-    static double last_rewiew;
-    if (time - last_rewiew > 3600 * 24 * 365) {
-        last_rewiew = time;
-        for (Body *body_ptr : bodies_ptrs)
-            body_ptr->update_trajectory(true);
-    } else
-        for (Body *body_ptr : bodies_ptrs)
-            body_ptr->update_trajectory(false);
-}

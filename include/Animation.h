@@ -13,7 +13,7 @@ private:
     sf::Sprite background;
     Animation_System *animation_system;
 
-    double_t init_anim_speed = 0.5 * 24 * 3600;
+    double_t init_anim_speed = 10 * 24 * 3600;
     double_t anim_speed = init_anim_speed;
 
 
@@ -25,7 +25,7 @@ private:
     const float init_scale;
     float scale;
 
-    void keyboard_handler();
+    void keyboard_handler(float fps);
 
     void keyboard_event(sf::Event event);
 

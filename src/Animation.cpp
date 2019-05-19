@@ -1,5 +1,6 @@
 #include "Animation.h"
-#include "Planet.hpp"
+
+extern const float INIT_VIEW_SIZE;
 
 void Animation::keyboard_event(sf::Event event) {
     using sf::Keyboard;
@@ -20,6 +21,11 @@ void Animation::keyboard_event(sf::Event event) {
                 }
                 x_shift = 0;
                 y_shift = 0;
+                break;
+            case Keyboard::F5:
+                std::cout << "p";
+                if (event.type == sf::Event::KeyPressed)
+                    is_run = !is_run;
                 break;
             default:
                 animation_system->keyboard_event(event);
@@ -86,7 +92,7 @@ void Animation::draw() {
 Animation::Animation(Animation_System *animationSystem) : window(sf::VideoMode::getFullscreenModes()[0], "",
                                                                  sf::Style::Fullscreen,
                                                                  sf::ContextSettings(0, 0, 16, 3, 0)),
-                                                          init_scale(window.getSize().x / 700e9f),
+                                                          init_scale(window.getSize().x / INIT_VIEW_SIZE),
                                                           animation_system(animationSystem),
                                                           scale(init_scale) {
     background.setPosition(0, 0);
@@ -122,7 +128,8 @@ void Animation::run() {
         keyboard_handler(get_fps());
         draw();
         window.display();
-        animation_system->update(anim_speed / std::max(get_fps(), 30));
+        if (is_run)
+            animation_system->update(anim_speed / std::max(get_fps(), 30));
 
     }
 }

@@ -6,6 +6,7 @@
 #include <SFML/Graphics.hpp>
 #include "Animation_System.h"
 
+
 class Animation {
 private:
     unsigned long frame = 0;
@@ -13,6 +14,7 @@ private:
     sf::Sprite background;
     Animation_System *animation_system;
 
+    bool is_run = true;
     double_t init_anim_speed = 10 * 24 * 3600;
     double_t anim_speed = init_anim_speed;
 

@@ -4,9 +4,10 @@
 #include "SFML/Graphics.hpp"
 #include "Vector3.hpp"
 #include <SFML/OpenGL.hpp>
-#include "Planet.hpp"
 
 class Solar_System;
+
+extern const float INIT_VIEW_SIZE;
 
 class Rocket : public Jet_Body, public sf::Drawable {
 private:
@@ -34,9 +35,9 @@ public:
         if (!texture_off.loadFromFile(image_engine_off) || !texture_on.loadFromFile(image_engine_on))
             exit(1);
         sprite.setTexture(texture_off);
-        sprite.setScale(0.2e8, 0.2e8);
+        sprite.setScale(0.4e8, 0.4e8);
         sprite.setOrigin(texture_off.getSize().x * 0.5f, texture_off.getSize().y * 0.5f);
-        sprite.setRotation(90);
+        sprite.setRotation(45);
     }
 
 //TODO::repair it
@@ -79,6 +80,8 @@ public:
         target.popGLStates();
 
         states.transform.scale(1, -1); //revert y-axis
-        target.draw(sprite, states);
+        sf::Sprite cur_sprite(sprite);
+        cur_sprite.scale(sf::Vector2f(1, 1) * (target.getView().getSize().x / INIT_VIEW_SIZE));
+        target.draw(cur_sprite, states);
     }
 };

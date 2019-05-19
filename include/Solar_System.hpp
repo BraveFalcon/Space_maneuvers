@@ -73,7 +73,7 @@ public:
     };
 
     void keyboard_handler(const float fps) final {
-        float delta_angle = 60 / fps;
+        float delta_angle = 90 / fps;
         using sf::Keyboard;
         if (Keyboard::isKeyPressed(Keyboard::Q))
             rocket.rotate(delta_angle);
